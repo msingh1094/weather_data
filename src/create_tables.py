@@ -1,6 +1,12 @@
+import os
 import psycopg2
+from dotenv import load_dotenv
 
-DATABASE_URL = 'postgresql://weather_user:root@localhost:5432/weather_data'
+# Load environment variables from .env file
+load_dotenv()
+
+# Construct the database connection string from environment variables
+DATABASE_URL = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
 
 def create_tables():
     """Creates the weather_data and yearly_weather_stats tables."""
@@ -8,7 +14,7 @@ def create_tables():
     cur = conn.cursor()
 
     # Create weather_data table
-    cur.execute("""
+    cur.execute(""" 
         CREATE TABLE IF NOT EXISTS weather_data (
             id SERIAL PRIMARY KEY,
             station_id TEXT NOT NULL,
@@ -19,20 +25,8 @@ def create_tables():
         );
     """)
 
-    # Create weather_stats table
-    # cur.execute("""
-    #     CREATE TABLE IF NOT EXISTS weather_stats (
-    #         id SERIAL PRIMARY KEY,
-    #         station_id TEXT NOT NULL,
-    #         year INT NOT NULL,
-    #         avg_max_temp REAL,
-    #         avg_min_temp REAL,
-    #         total_precipitation REAL
-    #     );
-    # """)
-
     # Create yearly_weather_stats table
-    cur.execute("""
+    cur.execute(""" 
         CREATE TABLE IF NOT EXISTS yearly_weather_stats (
             station_id VARCHAR(50) NOT NULL,
             year INT NOT NULL,
